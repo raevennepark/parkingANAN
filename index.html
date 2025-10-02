@@ -36,8 +36,8 @@
     <div class="sub">Poblacion, Talibon, Bohol</div>
   </div>
   <div class="status-row">
-    <div class="dot" id="conn-dot"></div>
-    <div id="conn-text" class="sub">Connecting…</div>
+    <div class="dot online" id="conn-dot"></div>
+    <div id="conn-text" class="sub">Connected</div>
   </div>
 </header>
 <main class="card">
@@ -56,12 +56,17 @@ const connText = document.getElementById('conn-text');
 function makeSlots(){
   grid.innerHTML = '';
   for(let i=1;i<=NUM_SLOTS;i++){
+    const isOccupied = (i === 4 || i === 6); // <--- Set Slot 4 and 6 to occupied
+    const statusClass = isOccupied ? 'occupied' : 'empty';
+    const statusText = isOccupied ? 'Occupied' : 'Vacant'; // <--- Change 'Empty' to 'Vacant'
+    const uidText = isOccupied ? `Car${i}XYZ` : '-'; // <--- Added a mock UID for occupied slots
+
     const el = document.createElement('div');
-    el.className = 'slot empty';
+    el.className = 'slot ' + statusClass;
     el.innerHTML = `
       <div class="slot-id">Slot ${i}</div>
-      <div class="badge">Empty</div>
-      <div class="uid" id="uid-${i}">-</div>
+      <div class="badge">${statusText}</div>
+      <div class="uid" id="uid-${i}">${uidText}</div>
     `;
     grid.appendChild(el);
   }
@@ -74,7 +79,7 @@ function connectWS(){
   ws = new WebSocket(WS_HOST);
   ws.onopen = () => {
     connDot.classList.add('online');
-    connText.textContent = 'Online';
+    connText.textContent = 'Connected'; // <--- Change 'Online' to 'Connected' on successful connection
   };
   ws.onclose = () => {
     connDot.classList.remove('online');
@@ -87,14 +92,16 @@ function connectWS(){
       data.forEach((slot,i) => {
         const el = grid.children[i];
         if(!el) return;
+        // The badge content is updated here based on live data
+        const badgeText = slot.occupied ? 'Occupied' : 'Vacant'; // <--- Ensure live update uses 'Vacant'
         el.className = 'slot ' + (slot.occupied ? 'occupied' : 'empty');
-        el.querySelector('.badge').textContent = slot.occupied ? 'Occupied' : 'Empty';
+        el.querySelector('.badge').textContent = badgeText;
         el.querySelector('.uid').textContent = slot.uid || '-';
       });
     }catch(e){console.error('Invalid WS data',e);}
   };
 }
-connectWS();
+// connectWS(); // <--- Commented out to display the desired initial state
 </script>
 </body>
 </html>
