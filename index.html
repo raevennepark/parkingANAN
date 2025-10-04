@@ -1,107 +1,111 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>ESP32 Parking — Live Slots</title>
-<style>
-  :root{--bg:#0f1724;--card:#0b1220;--accent:#7dd3fc;--muted:#9aa6b2;--slot-size:120px;--radius:14px;}
-  *{box-sizing:border-box}
-  html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;background:linear-gradient(180deg,var(--bg),#071021);color:#e6eef6}
-  .wrap{max-width:980px;margin:24px auto;padding:18px}
-  header{display:flex;gap:12px;align-items:center;justify-content:space-between}
-  h1{font-size:20px;margin:0}
-  .sub{color:var(--muted);font-size:13px}
-  .card{background:rgba(255,255,255,0.02);padding:16px;border-radius:16px;box-shadow:0 6px 18px rgba(2,6,23,0.6);margin-top:24px;}
-  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;margin-top:16px}
-  .slot{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px;border-radius:12px;min-height:110px;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));transition:transform 220ms ease, box-shadow 220ms ease}
-  .slot:hover{transform:translateY(-4px);box-shadow:0 10px 24px rgba(2,6,23,0.6)}
-  .badge{font-weight:700;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.03);font-size:13px}
-  .slot-id{font-size:18px;margin:8px 0 4px}
-  .uid{font-size:12px;color:var(--muted);word-break:break-all;text-align:center}
-  .empty{background:linear-gradient(180deg,rgba(34,197,94,0.14),rgba(34,197,94,0.06));border:1px solid rgba(34,197,94,0.18)}
-  .occupied{background:linear-gradient(180deg,rgba(239,68,68,0.14),rgba(239,68,68,0.06));border:1px solid rgba(239,68,68,0.18)}
-  .status-row{display:flex;gap:10px;align-items:center}
-  .dot{width:10px;height:10px;border-radius:999px;background:red;box-shadow:0 0 8px rgba(255,0,0,0.25)}
-  .dot.online{background:green;box-shadow:0 0 12px rgba(0,255,0,0.18)}
-  footer{margin-top:18px;color:var(--muted);font-size:13px;text-align:center}
-  @media (max-width:480px){:root{--slot-size:100px}h1{font-size:16px}}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Elusive Button</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            width: 100vw;
+            position: relative;
+            overflow: hidden;
+            background-color: #1f2937; /* Dark background remains */
+        }
+
+        #click-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.2s ease;
+        }
+
+        /* Styling for the video container to ensure it fills the screen for centering */
+        #video-container {
+            width: 100vw;
+            height: 100vh;
+        }
+    </style>
 </head>
 <body>
-<div class="wrap">
-<header>
-  <div>
-    <h1>parkingANAN — Live Slots</h1>
-    <div class="sub">Poblacion, Talibon, Bohol</div>
-  </div>
-  <div class="status-row">
-    <div class="dot online" id="conn-dot"></div>
-    <div id="conn-text" class="sub">Connected</div>
-  </div>
-</header>
-<main class="card">
-  <div class="sub">6 Slots — Auto-updates via WebSocket</div>
-  <div id="slotsGrid" class="grid" aria-live="polite" style="margin-top:12px"></div>
-  <footer><b>AER</b></footer>
-</main>
-</div>
-<script>
-const WS_HOST = `ws://${location.hostname}:81/`;
-const NUM_SLOTS = 6;
-const grid = document.getElementById('slotsGrid');
-const connDot = document.getElementById('conn-dot');
-const connText = document.getElementById('conn-text');
 
-function makeSlots(){
-  grid.innerHTML = '';
-  for(let i=1;i<=NUM_SLOTS;i++){
-    const isOccupied = (i === 4 || i === 6); // <--- Set Slot 4 and 6 to occupied
-    const statusClass = isOccupied ? 'occupied' : 'empty';
-    const statusText = isOccupied ? 'Occupied' : 'Vacant'; // <--- Change 'Empty' to 'Vacant'
-    const uidText = isOccupied ? `Car${i}XYZ` : '-'; // <--- Added a mock UID for occupied slots
+    <button 
+        id="click-button" 
+        class="
+            px-8 py-4 text-xl font-bold 
+            bg-indigo-600 text-white 
+            rounded-xl shadow-lg 
+            hover:bg-indigo-700 hover:shadow-2xl 
+            focus:outline-none focus:ring-4 focus:ring-indigo-500 focus:ring-opacity-50
+            active:bg-indigo-800
+        "
+    >
+        Click Here
+    </button>
 
-    const el = document.createElement('div');
-    el.className = 'slot ' + statusClass;
-    el.innerHTML = `
-      <div class="slot-id">Slot ${i}</div>
-      <div class="badge">${statusText}</div>
-      <div class="uid" id="uid-${i}">${uidText}</div>
-    `;
-    grid.appendChild(el);
-  }
-}
+    <script>
+        let clickCount = 0;
+        const maxClicks = 3;
+        const button = document.getElementById('click-button');
+        const body = document.body;
 
-makeSlots();
+        function getRandomPosition() {
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+            const buttonWidth = button.offsetWidth;
+            const buttonHeight = button.offsetHeight;
 
-let ws;
-function connectWS(){
-  ws = new WebSocket(WS_HOST);
-  ws.onopen = () => {
-    connDot.classList.add('online');
-    connText.textContent = 'Connected'; // <--- Change 'Online' to 'Connected' on successful connection
-  };
-  ws.onclose = () => {
-    connDot.classList.remove('online');
-    connText.textContent = 'Reconnecting…';
-    setTimeout(connectWS,2000);
-  };
-  ws.onmessage = (msg) => {
-    try{
-      const data = JSON.parse(msg.data);
-      data.forEach((slot,i) => {
-        const el = grid.children[i];
-        if(!el) return;
-        // The badge content is updated here based on live data
-        const badgeText = slot.occupied ? 'Occupied' : 'Vacant'; // <--- Ensure live update uses 'Vacant'
-        el.className = 'slot ' + (slot.occupied ? 'occupied' : 'empty');
-        el.querySelector('.badge').textContent = badgeText;
-        el.querySelector('.uid').textContent = slot.uid || '-';
-      });
-    }catch(e){console.error('Invalid WS data',e);}
-  };
-}
-// connectWS(); // <--- Commented out to display the desired initial state
-</script>
+            const safeX = viewportWidth - buttonWidth;
+            const safeY = viewportHeight - buttonHeight;
+            
+            const newX = Math.floor(Math.random() * safeX);
+            const newY = Math.floor(Math.random() * safeY);
+
+            return { x: newX, y: newY };
+        }
+
+        function handleButtonClick() {
+            clickCount++;
+
+            if (clickCount < maxClicks) {
+                // Clicks 1 and 2: Move the button
+                const newPos = getRandomPosition();
+                
+                button.style.transform = 'none';
+                button.style.left = `${newPos.x}px`;
+                button.style.top = `${newPos.y}px`;
+
+            } else if (clickCount === maxClicks) {
+                // Click 3: Show the video
+                button.classList.add('hidden');
+
+                const videoId = 'vqs9lv';
+                
+                // Embed the Streamable video, set to autoplay and mute to comply with browser policies
+                const videoEmbed = `
+                    <div id="video-container" class="flex justify-center items-center p-4">
+                        <iframe 
+                            src="https://streamable.com/e/${videoId}?autoplay=1&muted=1&loop=1" 
+                            frameborder="0" 
+                            allowfullscreen 
+                            allow="autoplay; encrypted-media; fullscreen"
+                            class="w-full h-full max-w-4xl max-h-[80vh] rounded-xl shadow-2xl"
+                        ></iframe>
+                    </div>
+                `;
+
+                // Replace all current body content with the video
+                body.innerHTML = videoEmbed;
+            }
+        }
+        
+        button.addEventListener('click', handleButtonClick);
+    </script>
 </body>
 </html>
