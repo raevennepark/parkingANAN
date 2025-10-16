@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>parkingANAN • Master Panel</title>
 <style>
+  /* ---------- design tokens (same as login) ---------- */
   :root{
     --bg:#0a111e;
     --card:#0b1220;
@@ -16,7 +17,8 @@
   }
   *{box-sizing:border-box}
   html,body{height:100%;margin:0;font-family:var(--font);background:linear-gradient(135deg,var(--bg),#050a14);color:#e6eef6;display:flex;align-items:center;justify-content:center;overflow:hidden}
-  /* ---------- login card (your original) ---------- */
+
+  /* ---------- login card (exact copy) ---------- */
   .login-card{background:var(--card);padding:40px 32px;border-radius:var(--radius);box-shadow:0 12px 32px rgba(2,6,23,.7);width:100%;max-width:380px;backdrop-filter:blur(4px);transition:opacity .4s}
   .logo{width:80px;height:80px;margin:0 auto 16px;display:block;border-radius:50%;object-fit:cover}
   h1{margin:0 0 4px;font-size:24px;font-weight:700;text-align:center;letter-spacing:.5px}
@@ -34,12 +36,12 @@
   button:hover{background:#a1e3ff}
   button:active{transform:scale(.98)}
   footer{margin-top:28px;color:var(--muted);font-size:12px;text-align:center}
-  /* ---------- dashboard (compact) ---------- */
+
+  /* ---------- dashboard (compact, never full width) ---------- */
   .dash{opacity:0;pointer-events:none;width:100%;max-width:480px;display:flex;flex-direction:column;gap:18px;padding:0 16px;transition:opacity .4s}
   .card{background:var(--card);padding:22px 20px;border-radius:var(--radius);box-shadow:0 12px 32px rgba(2,6,23,.7);backdrop-filter:blur(4px)}
   h2{margin:0 0 10px;font-size:17px;font-weight:600;letter-spacing:.5px}
   .row{display:flex;gap:12px}
-  .half{flex:1}
   .slot-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
   .slot-btn{position:relative;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);color:#e6eef6;font-size:15px;padding:16px;border-radius:10px;cursor:pointer;transition:border-color .25s ease,box-shadow .25s ease}
   .slot-btn:hover{border-color:var(--accent)}
@@ -98,14 +100,17 @@
   <div class="card">
     <h2>Quick Actions</h2>
     <div class="row">
-      <button id="gate" class="gate half">Open Gate</button>
-      <button id="diag" class="half">Run Full Diagnosis</button>
+      <button id="gate" class="gate" style="flex:1">Open Gate</button>
+      <button id="diag" style="flex:1">Run Full Diagnosis</button>
     </div>
   </div>
 </div>
 
 <script>
-/* ---------- login logic ---------- */
+/* ---------- helpers ---------- */
+const $ = q => document.querySelector(q), on = (el,ev,cb) => el.addEventListener(ev,cb);
+
+/* ---------- login ---------- */
 const pwInput = $('#pw'), toggle = $('#togglePw');
 toggle.onclick = () => {
   const show = pwInput.type === 'password';
@@ -113,10 +118,9 @@ toggle.onclick = () => {
   $('#iconShow').style.display = show ? 'none' : 'block';
   $('#iconHide').style.display = show ? 'block' : 'none';
 };
-$('#loginForm').addEventListener('submit', e => {
+on($('#loginForm'),'submit', e => {
   e.preventDefault();
   if(pwInput.value.trim() === 'qwerty'){
-    sessionStorage.setItem('loggedIn','1');
     $('.login-card').style.opacity = 0;
     setTimeout(()=>{
       $('.login-card').style.pointerEvents='none';
@@ -130,7 +134,6 @@ $('#loginForm').addEventListener('submit', e => {
 });
 
 /* ---------- dashboard ---------- */
-const $ = q => document.querySelector(q), $$ = q => document.querySelectorAll(q);
 let spinTimer = null;
 function spin(dir){fetch('/api/rotate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({direction:dir})});}
 function stopSpin(){fetch('/api/stop',{method:'POST'});}
