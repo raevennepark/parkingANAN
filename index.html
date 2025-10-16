@@ -48,7 +48,7 @@
   .loc-btn:hover{transform:translateY(-4px);box-shadow:0 10px 24px rgba(2,6,23,.8)}
   .loc-btn svg{width:24px;height:24px;fill:var(--accent);}
 
-  /* 3-D map panel */
+  /* 3-D map modal */
   #mapPanel{
     position:fixed;
     inset:0;
@@ -198,7 +198,7 @@ makeSlots();
 setTimeout(connect, 250);
 
 /*****************************************************************
- *  3-D MAP LOGIC (MapLibre + Stadia)
+ *  3-D MAP LOGIC (MapLibre + Stadia) – EXACT ROUTE & DISTANCE
  *****************************************************************/
 const locBtn   = document.querySelector('.loc-btn');
 const mapPanel = document.getElementById('mapPanel');
@@ -212,7 +212,7 @@ mapClose.addEventListener('click', () => mapPanel.classList.remove('active'));
 function openMap(){
   mapPanel.classList.add('active');
   if(!map) initMap();
-  else randomizeDistance();
+  else getRoute();
 }
 
 function initMap(){
@@ -225,17 +225,11 @@ function initMap(){
     bearing: -20
   });
   map.addControl(new maplibregl.NavigationControl());
-  map.on('load', () => { randomizeDistance(); animateCamera(); });
-}
-
-function randomizeDistance(){
-  const km = (1 + Math.random()*8).toFixed(1);
-  distanceTag.textContent = `${km} km to Poblacion, Talibon`;
-  getRoute();
+  map.on('load', () => { getRoute(); animateCamera(); });
 }
 
 function getRoute(){
-  const DEST = [124.3247, 10.1523];
+  const DEST = [124.3247, 10.1523]; // Poblacion, Talibon
   navigator.geolocation.getCurrentPosition(
     pos => drawRoute([pos.coords.longitude, pos.coords.latitude], DEST),
     err => drawRoute([120.9262, 14.7936], DEST), // Bocaue fallback
@@ -250,14 +244,20 @@ function drawRoute(start, end){
     .then(r => r.json())
     .then(json => {
       const route = json.routes[0].geometry;
-      if(map.getSource('route')) map.removeLayer('route'), map.removeSource('route');
+      const dist  = (json.routes[0].distance / 1000).toFixed(1); // metres → km
+      distanceTag.textContent = `${dist} km to Poblacion, Talibon`;
+
+      if(map.getSource('route')){
+        map.removeLayer('route');
+        map.removeSource('route');
+      }
       map.addSource('route', { type: 'geojson', data: { type: 'LineString', coordinates: route } });
       map.addLayer({
         id: 'route',
         type: 'line',
         source: 'route',
         layout: { 'line-join': 'round', 'line-cap': 'round' },
-        paint: { 'line-color': '#7dd3fc', 'line-width': 6 }
+        paint: { 'line-color': '#7dd3fc', 'line-width': 8 }
       });
       const bbox = route.reduce((b, c) => [
         [Math.min(b[0][0], c[0]), Math.min(b[0][1], c[1])],
