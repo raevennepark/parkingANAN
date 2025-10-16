@@ -12,9 +12,9 @@
   header{display:flex;gap:12px;align-items:center;justify-content:space-between}
   h1{font-size:20px;margin:0}
   .sub{color:var(--muted);font-size:13px}
-  .card{background:rgba(255,255,255,0.02);padding:16px;border-radius:16px;box-shadow:0 6px 18px rgba(2,6,23,0.6);margin-top:12px} /* <-- added margin-top */
-  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;margin-top:16px}
-  .slot{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px;border-radius:12px;min-height:110px;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));transition:transform 220ms ease, box-shadow 220ms ease}
+  .card{background:rgba(255,255,255,0.02);padding:28px 16px 32px;border-radius:16px;box-shadow:0 6px 18px rgba(2,6,23,0.6);margin-top:28px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:18px;margin-top:20px;margin-bottom:8px} /* extra bottom gap */
+  .slot{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px;border-radius:12px;min-height:118px;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));transition:transform 220ms ease, box-shadow 220ms ease}
   .slot:hover{transform:translateY(-4px);box-shadow:0 10px 24px rgba(2,6,23,0.6)}
   .badge{font-weight:700;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.03);font-size:13px}
   .slot-id{font-size:18px;margin:8px 0 4px}
@@ -33,7 +33,7 @@
 <header>
   <div>
     <h1>parkingANAN — Live Slots</h1>
-    <div class="sub">Barrio Wakas Bocaue,Bulacan</div>
+    <div class="sub">Barrio Wakas Bocaue, Bulacan</div>
   </div>
   <div class="status-row">
     <div class="dot" id="conn-dot"></div>
@@ -43,7 +43,7 @@
 
 <main class="card">
   <div class="sub">6 Slots — Auto-updates via WebSocket</div>
-  <div id="slotsGrid" class="grid" aria-live="polite" style="margin-top:12px"></div>
+  <div id="slotsGrid" class="grid" aria-live="polite"></div>
   <footer><b>AER</b></footer>
 </main>
 </div>
