@@ -12,13 +12,12 @@
     --muted:#6b7785;
     --radius:14px;
     --danger:#ef4444;
-    --success:#22c55e;
     --font:"Inter",system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
   }
   *{box-sizing:border-box}
   html,body{height:100%;margin:0;font-family:var(--font);background:linear-gradient(135deg,var(--bg),#050a14);color:#e6eef6;display:flex;align-items:center;justify-content:center}
   .card{background:var(--card);padding:40px 32px;border-radius:var(--radius);box-shadow:0 12px 32px rgba(2,6,23,.7);width:100%;max-width:380px;backdrop-filter:blur(4px)}
-  .logo{width:48px;height:48px;margin:0 auto 12px;display:block;border-radius:50%;background:var(--accent);mask:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/></svg>') center/contain no-repeat}
+  .logo{width:80px;height:80px;margin:0 auto 16px;display:block;border-radius:50%;object-fit:cover}
   h1{margin:0 0 4px;font-size:24px;font-weight:700;text-align:center;letter-spacing:.5px}
   .sub{color:var(--muted);font-size:14px;text-align:center;margin-bottom:32px}
   .field{position:relative;margin-bottom:20px}
@@ -38,7 +37,8 @@
 </head>
 <body>
 <form id="loginForm" class="card" autocomplete="off">
-  <div class="logo"></div>
+  <!-- logo -->
+  <img src="image.png" alt="parkingANAN" class="logo">
   <h1>Admin Portal</h1>
   <div class="sub">Poblacion, Talibon, Bohol</div>
 
@@ -47,14 +47,10 @@
     <div class="input-wrapper">
       <input id="pw" type="password" placeholder="Enter password" required autofocus>
       <span class="toggle" id="togglePw">
-        <!-- SHOW (eye) -->
-        <svg id="iconShow" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5C21.27 7.61 17 4.5 12 4.5zm0 12c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
-        </svg>
-        <!-- HIDE (eye-off) -->
-        <svg id="iconHide" viewBox="0 0 24 24" aria-hidden="true" style="display:none">
-          <path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L21.73 22 23 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/>
-        </svg>
+        <!-- SHOW -->
+        <svg id="iconShow" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5C21.27 7.61 17 4.5 12 4.5zm0 12c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+        <!-- HIDE -->
+        <svg id="iconHide" viewBox="0 0 24 24" style="display:none"><path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L21.73 22 23 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/></svg>
       </span>
     </div>
   </div>
