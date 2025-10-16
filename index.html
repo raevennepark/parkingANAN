@@ -37,7 +37,7 @@
   .error{color:var(--danger);font-size:12px;margin-top:8px;min-height:18px}
 
   /* ---------- dashboard ---------- */
-  .dash{width:100%;max-width:480px;display:flex;flex-direction:column;gap:24px;padding:0 16px}
+  .dash{width:100%;max-width:480px;display:flex;flex-direction:column;gap:24px;padding:0 16px;position:relative}
   .card{background:var(--card);padding:28px 24px;border-radius:var(--radius);box-shadow:0 12px 32px rgba(2,6,23,.7)}
   h2{margin:0 0 12px;font-size:18px;font-weight:600;letter-spacing:.5px}
   .sub{color:var(--muted);font-size:13px;margin-bottom:20px}
@@ -55,11 +55,18 @@
   .stop{position:absolute;right:6px;top:50%;transform:translateY(-50%);padding:6px 10px;font-size:12px;background:var(--danger);color:#fff;border-radius:6px;display:none}
   .slot-btn.active .stop{display:block}
   footer{margin-top:12px;color:var(--muted);font-size:12px;text-align:center}
+
+  /* ---------- hamburger & user menu ---------- */
+  #hamburger{position:absolute;top:16px;right:16px;width:32px;height:32px;display:flex;flex-direction:column;justify-content:space-between;padding:6px;cursor:pointer;border-radius:6px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08)}
+  #hamburger span{height:2px;background:var(--accent);border-radius:1px}
+  #userMenu{position:absolute;top:56px;right:16px;width:180px;background:var(--card);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);box-shadow:0 8px 24px rgba(2,6,23,.7);display:none;flex-direction:column;padding:8px}
+  #userMenu button{width:100%;padding:10px;font-size:14px;margin:0}
+  #userMenu button:first-of-type{margin-bottom:6px}
 </style>
 </head>
 <body>
 
-<!-- ////////////////////  LOGIN SCREEN  //////////////////// -->
+<!-- ====================  LOGIN SCREEN  ==================== -->
 <form id="loginScreen" class="login-card" autocomplete="off">
   <img src="https://i.ibb.co/ccG4xFdw/image.png" alt="parkingANAN" class="logo">
   <h1>Admin Portal</h1>
@@ -81,8 +88,17 @@
   <footer><b>parkingANAN</b> © 2025</footer>
 </form>
 
-<!-- ////////////////////  DASHBOARD  //////////////////// -->
+<!-- ====================  DASHBOARD  ==================== -->
 <div id="dashScreen" class="dash" style="display:none">
+  <!-- hamburger -->
+  <div id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </div>
+  <!-- user menu -->
+  <div id="userMenu">
+    <button disabled>Signed-in Users</button>
+    <button class="danger" id="logoutBtn">Logout</button>
+  </div>
 
   <!-- ROTATION -->
   <div class="card">
@@ -101,7 +117,7 @@
     <div class="slot-grid" id="slotGrid"></div>
   </div>
 
-  <!-- GATE + DIAGNOSTICS (side-by-side) -->
+  <!-- GATE + DIAGNOSTICS -->
   <div class="card">
     <h2>Quick Actions</h2>
     <div class="sub">Gate control & system check</div>
@@ -115,47 +131,65 @@
 </div>
 
 <script>
-/* ====================  LOGIN LOGIC  ==================== */
-const pwInput = document.getElementById('pw');
-const toggle = document.getElementById('togglePw');
-const iconShow = document.getElementById('iconShow');
-const iconHide = document.getElementById('iconHide');
+/* ====================  UTILS  ==================== */
+const $ = q => document.querySelector(q);
+const on = (el, ev, cb) => el.addEventListener(ev, cb);
 
-toggle.onclick = () => {
-  const show = pwInput.type === 'password';
-  pwInput.type = show ? 'text' : 'password';
-  iconShow.style.display = show ? 'none' : 'block';
-  iconHide.style.display = show ? 'block' : 'none';
+/* ====================  LOGIN / LOGOUT  ==================== */
+const loginScreen = $('#loginScreen');
+const dashScreen = $('#dashScreen');
+const userMenu = $('#userMenu');
+
+function showDashboard() {
+  loginScreen.style.display = 'none';
+  dashScreen.style.display = 'flex';
+}
+function showLogin() {
+  // clear auth cookie
+  document.cookie = 'auth=; path=/; max-age=0; SameSite=Lax';
+  location.reload(); // simplest way to reset everything
+}
+
+/* ---------- login ---------- */
+document.getElementById('togglePw').onclick = () => {
+  const pw = $('#pw');
+  const show = pw.type === 'password';
+  pw.type = show ? 'text' : 'password';
+  $('#iconShow').style.display = show ? 'none' : 'block';
+  $('#iconHide').style.display = show ? 'block' : 'none';
 };
 
-document.getElementById('loginScreen').addEventListener('submit', e => {
+loginScreen.addEventListener('submit', e => {
   e.preventDefault();
-  const err = document.getElementById('err');
-  if (pwInput.value.trim() === 'qwerty') {
-    // 1-hour cookie, deleted when browser closes (no revive)
+  const err = $('#err');
+  if ($('#pw').value.trim() === 'qwerty') {
     document.cookie = 'auth=1; path=/; max-age=3600; SameSite=Lax';
     showDashboard();
   } else {
     err.textContent = 'Incorrect password';
-    pwInput.select();
+    $('#pw').select();
   }
 });
 
-function showDashboard() {
-  document.getElementById('loginScreen').style.display = 'none';
-  document.getElementById('dashScreen').style.display = 'flex';
-}
+/* ---------- logout ---------- */
+$('#logoutBtn').onclick = () => showLogin();
 
-/* ====================  GATE-KEEPER  ==================== */
+/* ---------- gate-keeper ---------- */
 (function () {
   const authed = document.cookie.split('; ').find(r => r.startsWith('auth='));
-  if (authed) showDashboard();          // already logged-in this session
+  if (authed) showDashboard();
 })();
 
-/* ====================  DASHBOARD LOGIC  ==================== */
-const $ = q => document.querySelector(q);
-const on = (el, ev, cb) => el.addEventListener(ev, cb);
+/* ---------- hamburger menu toggle ---------- */
+$('#hamburger').onclick = () => {
+  userMenu.style.display = userMenu.style.display === 'flex' ? 'none' : 'flex';
+};
+// close menu if clicking outside
+addEventListener('click', e => {
+  if (!e.target.closest('#hamburger') && !e.target.closest('#userMenu')) userMenu.style.display = 'none';
+});
 
+/* ====================  DASHBOARD FUNCTIONS  ==================== */
 /* ---------- rotation ---------- */
 let spinTimer = null;
 function spin(dir) {
