@@ -12,11 +12,26 @@
   }
   *{box-sizing:border-box}
   html,body{height:100%;margin:0;background:linear-gradient(135deg,var(--bg),#050a14);color:#e6eef6;display:flex;align-items:center;justify-content:center}
-  .wrap{max-width:960px;margin:24px auto;padding:18px;width:100%}
-  header{display:flex;gap:12px;align-items:center;justify-content:space-between}
-  h1{font-size:26px;margin:0;letter-spacing:.5px}
-  .sub{color:var(--muted);font-size:13px}
-  .card{background:rgba(255,255,255,.02);padding:28px;border-radius:var(--radius);box-shadow:0 12px 32px rgba(2,6,23,.7)}
+  /* ---------- login card ---------- */
+  #loginCard{background:var(--card);padding:40px 32px;border-radius:var(--radius);box-shadow:0 12px 32px rgba(2,6,23,.7);width:100%;max-width:380px;transition:opacity .5s,transform .5s}
+  .logo{width:80px;height:80px;margin:0 auto 16px;display:block;border-radius:50%;object-fit:cover}
+  h1{margin:0 0 4px;font-size:24px;font-weight:700;text-align:center;letter-spacing:.5px}
+  .sub{color:var(--muted);font-size:14px;text-align:center;margin-bottom:32px}
+  .field{position:relative;margin-bottom:20px}
+  label{font-size:13px;font-weight:500;margin-bottom:8px;display:block}
+  .input-wrapper{position:relative;display:flex;align-items:center}
+  input{width:100%;padding:12px 44px 12px 14px;border-radius:10px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);color:#e6eef6;font-size:15px;transition:border-color .25s ease,box-shadow .25s ease}
+  input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(125,211,252,.15)}
+  .toggle{position:absolute;right:14px;cursor:pointer;color:var(--muted);width:20px;height:20px;display:flex;align-items:center;justify-content:center}
+  .toggle:hover{color:var(--accent)}
+  .toggle svg{width:100%;height:100%;fill:currentColor}
+  button{width:100%;padding:12px;margin-top:8px;border:none;border-radius:10px;background:var(--accent);color:#071021;font-weight:600;font-size:15px;cursor:pointer;transition:background .25s ease,transform .15s ease}
+  button:hover{background:#a1e3ff}
+  button:active{transform:scale(.98)}
+  .error{color:var(--danger);font-size:12px;margin-top:8px;text-align:center;min-height:18px}
+  /* ---------- control ui ---------- */
+  #controlUI{display:none;opacity:0;transition:opacity .5s}
+  .card{background:rgba(255,255,255,.02);padding:28px;border-radius:var(--radius);box-shadow:0 12px 32px rgba(2,6,23,.7);margin-bottom:18px}
   .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px}
   .btn{width:100%;padding:18px;border:none;border-radius:10px;font-size:16px;font-weight:600;cursor:pointer;transition:background .25s ease,transform .15s ease,box-shadow .25s ease}
   .btn:active{transform:scale(.98)}
@@ -32,24 +47,46 @@
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header>
+<!---------- LOGIN CARD ---------->
+<div id="loginCard">
+  <img src="https://i.ibb.co/ccG4xFdw/image.png" alt="parkingANAN" class="logo">
+  <h1>Admin Portal</h1>
+  <div class="sub">Poblacion, Talibon, Bohol</div>
+  <form id="loginForm" autocomplete="off">
+    <div class="field">
+      <label for="pw">Master Password</label>
+      <div class="input-wrapper">
+        <input id="pw" type="password" placeholder="Enter password" required autofocus>
+        <span class="toggle" id="togglePw">
+          <svg id="iconShow" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5C21.27 7.61 17 4.5 12 4.5zm0 12c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+          <svg id="iconHide" viewBox="0 0 24 24" style="display:none"><path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L21.73 22 23 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/></svg>
+        </span>
+      </div>
+    </div>
+    <div id="err" class="error"></div>
+    <button type="submit">Secure Login</button>
+  </form>
+</div>
+
+<!---------- CONTROL UI (hidden until login) ---------->
+<div id="controlUI">
+  <header style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
     <div>
-      <h1>Rotary Master Control</h1>
-      <div class="sub">Poblacion, Talibon, Bohol &nbsp;•&nbsp; 6-Slot Carousel</div>
+      <h1>Master Control</h1>
+      <div class="sub">Poblacion, Talibon, Bohol</div>
     </div>
     <button class="btn danger" onclick="logout()">Logout</button>
   </header>
 
-  <main class="card">
-    <!-- Jog -->
-    <section class="grid">
-      <button class="btn primary" onclick="mock('CW')">↻ &nbsp;Clockwise</button>
-      <button class="btn primary" onclick="mock('CCW')">↺ &nbsp;Counter-Clockwise</button>
+  <main>
+    <section class="card">
+      <div class="grid">
+        <button class="btn primary" onclick="mock('CW')">↻ &nbsp;Clockwise</button>
+        <button class="btn primary" onclick="mock('CCW')">↺ &nbsp;Counter-Clockwise</button>
+      </div>
     </section>
 
-    <!-- Direct slot -->
-    <section class="card" style="margin-top:20px">
+    <section class="card" style="margin-top:18px">
       <div class="sub" style="text-align:center;margin-bottom:12px">Go to specific slot</div>
       <div class="slot-picker">
         <input id="slot" type="number" min="1" max="6" value="1">
@@ -57,22 +94,39 @@
       </div>
     </section>
 
-    <!-- FUNCTIONAL GATE TOGGLE -->
-    <section style="margin-top:20px;text-align:center">
+    <section class="card" style="margin-top:18px;text-align:center">
       <div class="sub">Vehicle Gate</div>
       <button id="gateBtn" class="btn gate-btn closed" onclick="toggleGate()">Gate Closed</button>
     </section>
 
-    <!-- Diagnosis -->
-    <section style="margin-top:20px;text-align:center">
+    <section class="card" style="margin-top:18px;text-align:center">
       <button class="btn primary" onclick="mock('DIAGNOSE')">🔍 &nbsp;Full System Diagnosis</button>
     </section>
   </main>
 
-  <footer><b>parkingANAN</b> Master Control &copy; 2025</footer>
+  <footer>Master Control © 2025</footer>
 </div>
 
 <script>
+/* ---------- login logic ---------- */
+const loginCard=document.getElementById('loginCard');
+const controlUI=document.getElementById('controlUI');
+document.getElementById('loginForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  const err=document.getElementById('err');
+  if(document.getElementById('pw').value.trim()==='qwerty'){
+    loginCard.style.opacity=0;
+    setTimeout(()=>{
+      loginCard.style.display='none';
+      controlUI.style.display='block';
+      setTimeout(()=>controlUI.style.opacity=1,30);
+    },500);
+  }else{
+    err.textContent='Incorrect password';
+    document.getElementById('pw').select();
+  }
+});
+
 /* ---------- mock comms ---------- */
 function mock(cmd,val){
   console.log('%cTX → '+cmd+(val?':'+val:''),'color:#7dd3fc;font-weight:bold');
@@ -80,8 +134,6 @@ function mock(cmd,val){
   btn.style.transform='scale(.96)';
   setTimeout(()=>btn.style.transform='',180);
 }
-
-/* ---------- gate toggle ---------- */
 let gateOpen=false;
 function toggleGate(){
   gateOpen=!gateOpen;
@@ -91,13 +143,22 @@ function toggleGate(){
   g.classList.toggle('closed',!gateOpen);
   mock(gateOpen?'GATE_OPEN':'GATE_CLOSE');
 }
-
-/* ---------- auth ---------- */
 function logout(){
   sessionStorage.removeItem('loggedIn');
-  location.href='index.html';
+  location.reload();
 }
-if(!sessionStorage.getItem('loggedIn'))location.href='index.html';
+
+/* ---------- show/hide password ---------- */
+const pwInput=document.getElementById('pw');
+const toggle=document.getElementById('togglePw');
+const iconShow=document.getElementById('iconShow');
+const iconHide=document.getElementById('iconHide');
+toggle.onclick=()=>{
+  const show=pwInput.type==='password';
+  pwInput.type=show?'text':'password';
+  iconShow.style.display=show?'none':'block';
+  iconHide.style.display=show?'block':'none';
+};
 </script>
 </body>
 </html>
