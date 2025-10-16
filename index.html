@@ -3,44 +3,73 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>parkingANAN — Log In</title>
+<title>Admin Portal • parkingANAN</title>
 <style>
-  :root{--bg:#0f1724;--card:#0b1220;--accent:#7dd3fc;--muted:#9aa6b2;--radius:14px;--danger:#ef4444}
+  :root{
+    --bg:#0a111e;
+    --card:#0b1220;
+    --accent:#7dd3fc;
+    --muted:#6b7785;
+    --radius:14px;
+    --danger:#ef4444;
+    --success:#22c55e;
+    --font:"Inter",system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+  }
   *{box-sizing:border-box}
-  html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;background:linear-gradient(180deg,var(--bg),#071021);color:#e6eef6;display:flex;align-items:center;justify-content:center}
-  .card{background:var(--card);padding:32px 28px;border-radius:var(--radius);box-shadow:0 6px 18px rgba(2,6,23,0.6);width:100%;max-width:340px}
-  h1{margin:0 0 8px;font-size:22px;text-align:center}
-  .sub{color:var(--muted);font-size:13px;text-align:center;margin-bottom:24px}
-  label{font-size:13px;margin-bottom:6px;display:block}
-  input{width:100%;padding:10px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.03);color:#e6eef6;font-size:14px;transition:border-color 220ms ease}
-  input:focus{outline:none;border-color:var(--accent)}
-  button{width:100%;padding:10px;margin-top:20px;border:none;border-radius:8px;background:var(--accent);color:#071021;font-weight:700;font-size:14px;cursor:pointer;transition:background 220ms ease}
+  html,body{height:100%;margin:0;font-family:var(--font);background:linear-gradient(135deg,var(--bg),#050a14);color:#e6eef6;display:flex;align-items:center;justify-content:center}
+  .card{background:var(--card);padding:40px 32px;border-radius:var(--radius);box-shadow:0 12px 32px rgba(2,6,23,.7);width:100%;max-width:380px;backdrop-filter:blur(4px)}
+  .logo{width:48px;height:48px;margin:0 auto 12px;display:block;border-radius:50%;background:var(--accent);mask:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/></svg>') center/contain no-repeat}
+  h1{margin:0 0 4px;font-size:24px;font-weight:700;text-align:center;letter-spacing:.5px}
+  .sub{color:var(--muted);font-size:14px;text-align:center;margin-bottom:32px}
+  .field{position:relative;margin-bottom:20px}
+  label{font-size:13px;font-weight:500;margin-bottom:8px;display:block}
+  input{width:100%;padding:12px 44px 12px 14px;border-radius:10px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);color:#e6eef6;font-size:15px;transition:border-color .25s ease,box-shadow .25s ease}
+  input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(125,211,252,.15)}
+  .toggle{position:absolute;right:14px;top:50%;transform:translateY(-50%);cursor:pointer;color:var(--muted);font-size:18px;user-select:none;transition:color .2s}
+  .toggle:hover{color:var(--accent)}
+  button{width:100%;padding:12px;margin-top:8px;border:none;border-radius:10px;background:var(--accent);color:#071021;font-weight:600;font-size:15px;cursor:pointer;transition:background .25s ease,transform .15s ease}
   button:hover{background:#a1e3ff}
+  button:active{transform:scale(.98)}
   .error{color:var(--danger);font-size:12px;margin-top:8px;text-align:center;min-height:18px}
-  footer{margin-top:24px;color:var(--muted);font-size:13px;text-align:center}
+  footer{margin-top:28px;color:var(--muted);font-size:12px;text-align:center}
 </style>
 </head>
 <body>
 <form id="loginForm" class="card" autocomplete="off">
-  <h1>parkingANAN</h1>
-  <div class="sub">Barrio Wakas Bocaue, Bulacan</div>
-  <label for="pw">Password</label>
-  <input id="pw" type="password" placeholder="Enter password" required autofocus>
+  <div class="logo"></div>
+  <h1>Admin Portal</h1>
+  <div class="sub">Poblacion, Talibon, Bohol</div>
+
+  <div class="field">
+    <label for="pw">Master Password</label>
+    <input id="pw" type="password" placeholder="Enter password" required autofocus>
+    <span class="toggle" id="togglePw">👁</span>
+  </div>
+
   <div id="err" class="error"></div>
-  <button type="submit">Log In</button>
-  <footer><b>AER</b></footer>
+  <button type="submit">Secure Login</button>
+
+  <footer><b>parkingANAN</b> © 2025</footer>
 </form>
 
 <script>
+const pwInput = document.getElementById('pw');
+const toggle = document.getElementById('togglePw');
+toggle.onclick = () => {
+  const show = pwInput.type === 'password';
+  pwInput.type = show ? 'text' : 'password';
+  toggle.textContent = show ? '🙈' : '👁';
+};
+
 document.getElementById('loginForm').addEventListener('submit', e => {
   e.preventDefault();
   const err = document.getElementById('err');
-  if(document.getElementById('pw').value.trim() === 'qwerty') {
+  if(pwInput.value.trim() === 'qwerty') {
     sessionStorage.setItem('loggedIn','1');
-    location.href = 'index.html';   // your live-slots page
+    location.href = 'index.html';   // live-slots dashboard
   } else {
     err.textContent = 'Incorrect password';
-    document.getElementById('pw').select();
+    pwInput.select();
   }
 });
 </script>
