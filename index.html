@@ -12,8 +12,8 @@
   header{display:flex;gap:12px;align-items:center;justify-content:space-between}
   h1{font-size:20px;margin:0}
   .sub{color:var(--muted);font-size:13px}
-  .card{background:rgba(255,255,255,0.02);padding:28px 16px 32px;border-radius:16px;box-shadow:0 6px 18px rgba(2,6,23,0.6);margin-top:28px}
-  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:18px;margin-top:20px;margin-bottom:8px} /* extra bottom gap */
+  .card{background:rgba(255,255,255,0.02);padding:28px 16px 32px;border-radius:16px;box-shadow:0 6px 18px rgba(2,6,23,0.6);margin-top:28px;position:relative}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:18px;margin-top:20px;margin-bottom:44px} /* extra bottom gap for button */
   .slot{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px;border-radius:12px;min-height:118px;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));transition:transform 220ms ease, box-shadow 220ms ease}
   .slot:hover{transform:translateY(-4px);box-shadow:0 10px 24px rgba(2,6,23,0.6)}
   .badge{font-weight:700;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.03);font-size:13px}
@@ -25,6 +25,23 @@
   .dot{width:10px;height:10px;border-radius:999px;background:red;box-shadow:0 0 8px rgba(255,0,0,0.25)}
   .dot.online{background:green;box-shadow:0 0 12px rgba(0,255,0,0.18)}
   footer{margin-top:18px;color:var(--muted);font-size:13px;text-align:center}
+
+  /* ---- location button ---- */
+  .loc-btn{
+    position:absolute;
+    left:16px;
+    bottom:16px;
+    background:var(--accent);
+    color:#0b1220;
+    border:none;
+    border-radius:999px;
+    padding:6px 14px;
+    font-size:13px;
+    font-weight:600;
+    cursor:pointer;
+    transition:background .2s;
+  }
+  .loc-btn:hover{background:#a1e6ff}
   @media (max-width:480px){:root{--slot-size:100px}h1{font-size:16px}}
 </style>
 </head>
@@ -44,6 +61,12 @@
 <main class="card">
   <div class="sub">6 Slots — Auto-updates via WebSocket</div>
   <div id="slotsGrid" class="grid" aria-live="polite"></div>
+
+  <!-- location button -->
+  <button class="loc-btn" onclick="window.open('https://maps.google.com/?q=14.7943,120.9365','_blank')">
+    📍 Location
+  </button>
+
   <footer><b>AER</b></footer>
 </main>
 </div>
