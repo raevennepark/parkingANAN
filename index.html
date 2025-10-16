@@ -3,9 +3,8 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>parkingANAN • Master Panel</title>
+<title>Master Panel • parkingANAN</title>
 <style>
-  /* ---------- design tokens (same as login) ---------- */
   :root{
     --bg:#0a111e;
     --card:#0b1220;
@@ -16,132 +15,122 @@
     --font:"Inter",system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
   }
   *{box-sizing:border-box}
-  html,body{height:100%;margin:0;font-family:var(--font);background:linear-gradient(135deg,var(--bg),#050a14);color:#e6eef6;display:flex;align-items:center;justify-content:center;overflow:hidden}
-
-  /* ---------- login card (exact copy) ---------- */
-  .login-card{background:var(--card);padding:40px 32px;border-radius:var(--radius);box-shadow:0 12px 32px rgba(2,6,23,.7);width:100%;max-width:380px;backdrop-filter:blur(4px);transition:opacity .4s}
-  .logo{width:80px;height:80px;margin:0 auto 16px;display:block;border-radius:50%;object-fit:cover}
-  h1{margin:0 0 4px;font-size:24px;font-weight:700;text-align:center;letter-spacing:.5px}
-  .sub{color:var(--muted);font-size:14px;text-align:center;margin-bottom:32px}
-  .field{position:relative;margin-bottom:20px}
-  label{font-size:13px;font-weight:500;margin-bottom:8px;display:block}
-  .input-wrapper{position:relative;display:flex;align-items:center}
-  input{width:100%;padding:12px 44px 12px 14px;border-radius:10px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);color:#e6eef6;font-size:15px;transition:border-color .25s ease,box-shadow .25s ease}
-  input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(125,211,252,.15)}
-  .toggle{position:absolute;right:14px;cursor:pointer;color:var(--muted);width:20px;height:20px;transition:color .2s;display:flex;align-items:center;justify-content:center}
-  .toggle:hover{color:var(--accent)}
-  .toggle svg{width:100%;height:100%;fill:currentColor}
-  .error{color:var(--danger);font-size:12px;margin-top:8px;text-align:center;min-height:18px}
-  button{width:100%;padding:12px;margin-top:8px;border:none;border-radius:10px;background:var(--accent);color:#071021;font-weight:600;font-size:15px;cursor:pointer;transition:background .25s ease,transform .15s ease}
+  html,body{height:100%;margin:0;font-family:var(--font);background:linear-gradient(135deg,var(--bg),#050a14);color:#e6eef6;display:flex;align-items:center;justify-content:center}
+  .dash{
+    width:100%;
+    max-width:480px;
+    display:flex;
+    flex-direction:column;
+    gap:24px;
+    padding:0 16px;
+  }
+  .card{
+    background:var(--card);
+    padding:28px 24px;
+    border-radius:var(--radius);
+    box-shadow:0 12px 32px rgba(2,6,23,.7);
+    backdrop-filter:blur(4px);
+  }
+  h2{margin:0 0 12px;font-size:18px;font-weight:600;letter-spacing:.5px}
+  .sub{color:var(--muted);font-size:13px;margin-bottom:20px}
+  .row{display:flex;gap:12px}
+  button{
+    flex:1;
+    padding:14px;
+    border:none;
+    border-radius:10px;
+    background:var(--accent);
+    color:#071021;
+    font-weight:600;
+    font-size:15px;
+    cursor:pointer;
+    transition:background .25s ease,transform .15s ease;
+  }
   button:hover{background:#a1e3ff}
   button:active{transform:scale(.98)}
-  footer{margin-top:28px;color:var(--muted);font-size:12px;text-align:center}
-
-  /* ---------- dashboard (compact, never full width) ---------- */
-  .dash{opacity:0;pointer-events:none;width:100%;max-width:480px;display:flex;flex-direction:column;gap:18px;padding:0 16px;transition:opacity .4s}
-  .card{background:var(--card);padding:22px 20px;border-radius:var(--radius);box-shadow:0 12px 32px rgba(2,6,23,.7);backdrop-filter:blur(4px)}
-  h2{margin:0 0 10px;font-size:17px;font-weight:600;letter-spacing:.5px}
-  .row{display:flex;gap:12px}
-  .slot-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-  .slot-btn{position:relative;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);color:#e6eef6;font-size:15px;padding:16px;border-radius:10px;cursor:pointer;transition:border-color .25s ease,box-shadow .25s ease}
-  .slot-btn:hover{border-color:var(--accent)}
-  .slot-btn.active{border-color:var(--accent);box-shadow:0 0 0 3px rgba(125,211,252,.15)}
-  .stop{position:absolute;right:6px;top:50%;transform:translateY(-50%);padding:5px 8px;font-size:11px;background:var(--danger);color:#fff;border-radius:6px;display:none}
-  .slot-btn.active .stop{display:block}
+  button.danger{background:var(--danger);color:#fff}
+  button.danger:hover{background:#f87171}
   button.gate{background:#10b981;color:#fff}
   button.gate:hover{background:#34d399}
-  button.gate.closed{background:var(--danger)}
+  button.gate.closed{background:#ef4444}
   button.gate.closed:hover{background:#f87171}
+  .slot-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .slot-btn{position:relative;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);color:#e6eef6;font-size:15px;padding:18px;border-radius:10px;cursor:pointer;transition:border-color .25s ease,box-shadow .25s ease}
+  .slot-btn:hover{border-color:var(--accent)}
+  .slot-btn.active{border-color:var(--accent);box-shadow:0 0 0 3px rgba(125,211,252,.15)}
+  .stop{
+    position:absolute;
+    right:6px;
+    top:50%;
+    transform:translateY(-50%);
+    padding:6px 10px;
+    font-size:12px;
+    background:var(--danger);
+    color:#fff;
+    border-radius:6px;
+    display:none;
+  }
+  .slot-btn.active .stop{display:block}
+  footer{margin-top:12px;color:var(--muted);font-size:12px;text-align:center}
 </style>
 </head>
 <body>
 
-<!-- ================= LOGIN CARD ================= -->
-<form id="loginForm" class="login-card" autocomplete="off">
-  <img src="https://i.ibb.co/ccG4xFdw/image.png" alt="parkingANAN" class="logo">
-  <h1>Admin Portal</h1>
-  <div class="sub">Poblacion, Talibon, Bohol</div>
+<div class="dash">
 
-  <div class="field">
-    <label for="pw">Master Password</label>
-    <div class="input-wrapper">
-      <input id="pw" type="password" placeholder="Enter password" required autofocus>
-      <span class="toggle" id="togglePw">
-        <svg id="iconShow" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5C21.27 7.61 17 4.5 12 4.5zm0 12c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
-        <svg id="iconHide" viewBox="0 0 24 24" style="display:none"><path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L21.73 22 23 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/></svg>
-      </span>
-    </div>
-  </div>
-  <div id="err" class="error"></div>
-  <button type="submit">Secure Login</button>
-  <footer><b>parkingANAN</b> © 2025</footer>
-</form>
-
-<!-- ================= DASHBOARD (hidden until login) ================= -->
-<div id="dash" class="dash">
-  <!-- Rotation -->
+  <!-- ROTATION -->
   <div class="card">
     <h2>Manual Rotation</h2>
-    <div class="sub">Tap &amp; hold to spin the rack</div>
+    <div class="sub">Tap & hold to spin the rack</div>
     <div class="row">
-      <button class="rot" data-dir="ccw">↺ Counter-clockwise</button>
-      <button class="rot" data-dir="cw">↻ Clockwise</button>
+      <button id="ccw">↺ Counter-clockwise</button>
+      <button id="cw">↻ Clockwise</button>
     </div>
   </div>
 
-  <!-- Slot selector -->
+  <!-- SLOT SELECTOR -->
   <div class="card">
     <h2>Go to Slot</h2>
     <div class="sub">Pick a slot; press stop anytime</div>
-    <div class="slot-grid" id="slotGrid"></div>
-  </div>
-
-  <!-- Gate + Diagnosis side-by-side -->
-  <div class="card">
-    <h2>Quick Actions</h2>
-    <div class="row">
-      <button id="gate" class="gate" style="flex:1">Open Gate</button>
-      <button id="diag" style="flex:1">Run Full Diagnosis</button>
+    <div class="slot-grid" id="slotGrid">
+      <!-- 1-6 buttons injected by JS -->
     </div>
   </div>
+
+  <!-- GATE + DIAGNOSTICS (side-by-side) -->
+  <div class="card">
+    <h2>Quick Actions</h2>
+    <div class="sub">Gate control & system check</div>
+    <div class="row">
+      <button id="gate" class="gate">Open Gate</button>
+      <button id="diag">Run Full Diagnosis</button>
+    </div>
+  </div>
+
+  <footer><b>parkingANAN</b> © 2025</footer>
 </div>
 
 <script>
 /* ---------- helpers ---------- */
-const $ = q => document.querySelector(q), on = (el,ev,cb) => el.addEventListener(ev,cb);
+const $ = q => document.querySelector(q);
+const on = (el,ev,cb) => el.addEventListener(ev,cb);
 
-/* ---------- login ---------- */
-const pwInput = $('#pw'), toggle = $('#togglePw');
-toggle.onclick = () => {
-  const show = pwInput.type === 'password';
-  pwInput.type = show ? 'text' : 'password';
-  $('#iconShow').style.display = show ? 'none' : 'block';
-  $('#iconHide').style.display = show ? 'block' : 'none';
-};
-on($('#loginForm'),'submit', e => {
-  e.preventDefault();
-  if(pwInput.value.trim() === 'qwerty'){
-    $('.login-card').style.opacity = 0;
-    setTimeout(()=>{
-      $('.login-card').style.pointerEvents='none';
-      $('#dash').style.opacity=1;
-      $('#dash').style.pointerEvents='auto';
-    },400);
-  }else{
-    $('#err').textContent = 'Incorrect password';
-    pwInput.select();
-  }
-});
-
-/* ---------- dashboard ---------- */
+/* ---------- rotation ---------- */
 let spinTimer = null;
-function spin(dir){fetch('/api/rotate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({direction:dir})});}
-function stopSpin(){fetch('/api/stop',{method:'POST'});}
-$$('.rot').forEach(b=>{
-  on(b,'mousedown',()=>{spin(b.dataset.dir);spinTimer=setInterval(()=>spin(b.dataset.dir),200)});
-  ['mouseup','mouseleave'].forEach(ev=>on(b,ev,()=>{clearInterval(spinTimer);stopSpin()}));
+function spin(dir){
+  fetch('/api/rotate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({direction:dir})});
+}
+function stopSpin(){
+  fetch('/api/stop',{method:'POST'});
+}
+on($('#cw'),'mousedown',()=>{spin('cw');spinTimer=setInterval(()=>spin('cw'),200)});
+on($('#ccw'),'mousedown',()=>{spin('ccw');spinTimer=setInterval(()=>spin('ccw'),200)});
+['mouseup','mouseleave'].forEach(ev=>{
+  on($('#cw'),ev,()=>{clearInterval(spinTimer);stopSpin()});
+  on($('#ccw'),ev,()=>{clearInterval(spinTimer);stopSpin()});
 });
-/* slots */
+
+/* ---------- slot selector ---------- */
 const grid = $('#slotGrid');
 for(let i=1;i<=6;i++){
   const b = document.createElement('button');
@@ -152,16 +141,20 @@ for(let i=1;i<=6;i++){
 grid.addEventListener('click',e=>{
   const btn = e.target.closest('.slot-btn');
   if(!btn) return;
+  const slot = btn.dataset.slot;
   if(btn.classList.contains('active')){
+    /* stop */
     fetch('/api/stop',{method:'POST'});
-    $$('.slot-btn').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.slot-btn').forEach(x=>x.classList.remove('active'));
   }else{
-    $$('.slot-btn').forEach(x=>x.classList.remove('active'));
+    /* go */
+    document.querySelectorAll('.slot-btn').forEach(x=>x.classList.remove('active'));
     btn.classList.add('active');
-    fetch('/api/goto',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({slot:btn.dataset.slot})});
+    fetch('/api/goto',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({slot})});
   }
 });
-/* gate */
+
+/* ---------- gate ---------- */
 let gateOpen = false;
 on($('#gate'),'click',()=>{
   gateOpen = !gateOpen;
@@ -169,9 +162,12 @@ on($('#gate'),'click',()=>{
   $('#gate').classList.toggle('closed');
   fetch('/api/gate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({open:gateOpen})});
 });
-/* diagnosis */
+
+/* ---------- diagnostics ---------- */
 on($('#diag'),'click',()=>{
-  fetch('/api/diagnose',{method:'POST'}).then(r=>r.json()).then(d=>alert(d.summary||'Diagnostics complete'));
+  fetch('/api/diagnose',{method:'POST'})
+    .then(r=>r.json())
+    .then(d=> alert(d.summary || 'Diagnostics complete'));
 });
 </script>
 </body>
