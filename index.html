@@ -43,55 +43,12 @@
     justify-content:center;
     cursor:pointer;
     transition:transform .22s ease,box-shadow .22s ease;
-    z-index:50;
   }
   .loc-btn:hover{transform:translateY(-4px);box-shadow:0 10px 24px rgba(2,6,23,.8)}
-  .loc-btn svg{width:24px;height:24px;fill:var(--accent);}
-
-  /* 3-D map modal */
-  #mapPanel{
-    position:fixed;
-    inset:0;
-    background:#000a;
-    display:none;
-    align-items:center;
-    justify-content:center;
-    z-index:100;
-  }
-  #mapPanel.active{display:flex}
-  #map{
-    width:90vw;
-    height:80vh;
-    border-radius:16px;
-    overflow:hidden;
-    box-shadow:0 12px 36px #000c;
-    position:relative;
-  }
-  #mapClose{
-    position:absolute;
-    top:12px;
-    right:12px;
-    background:var(--card);
-    border:1px solid rgba(255,255,255,.1);
-    color:var(--accent);
-    border-radius:999px;
-    width:36px;
-    height:36px;
-    font-size:20px;
-    cursor:pointer;
-    z-index:10;
-  }
-  #distanceTag{
-    position:absolute;
-    bottom:12px;
-    left:12px;
-    background:var(--card);
-    border:1px solid rgba(255,255,255,.1);
-    color:var(--accent);
-    padding:8px 14px;
-    border-radius:8px;
-    font-weight:600;
-    z-index:10;
+  .loc-btn svg{
+    width:24px;
+    height:24px;
+    fill:var(--accent);
   }
 </style>
 </head>
@@ -120,29 +77,8 @@
   <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
 </button>
 
-<!-- 3-D map modal -->
-<div id="mapPanel">
-  <div id="map">
-    <button id="mapClose">&times;</button>
-    <div id="distanceTag">0.0 km</div>
-  </div>
-</div>
-
-<!-- MapLibre GL JS (free) -->
-<script src="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.js"></script>
-<link href="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.css" rel="stylesheet">
-
 <script>
-/*****************************************************************
- *  CONFIG – Stadia key + tiles  (fallback router is OSRM)
- *****************************************************************/
-const STADIA_KEY = '511764c9-aece-4175-977f-334c3430e34a';
-const TILE_URL   = `https://tiles.stadiamaps.com/styles/stamen_toner.json?api_key=${STADIA_KEY}`;
-
-/*****************************************************************
- *  ORIGINAL SLOT CODE (unchanged)
- *****************************************************************/
-const WS_HOST = `${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.hostname}:81/`;
+const WS_HOST = `ws://${location.hostname}:81/`;
 const NUM_SLOTS = 6;
 const grid = document.getElementById('slotsGrid');
 const connDot = document.getElementById('conn-dot');
@@ -195,104 +131,6 @@ function scheduleReconnect(){ if(reconnectTimeout) return; reconnectTimeout=setT
 
 makeSlots();
 setTimeout(connect, 250);
-
-/*****************************************************************
- *  3-D MAP – EXACT ROAD + TRUE DISTANCE  (OSRM fallback)
- *****************************************************************/
-const locBtn   = document.querySelector('.loc-btn');
-const mapPanel = document.getElementById('mapPanel');
-const mapClose = document.getElementById('mapClose');
-const distanceTag = document.getElementById('distanceTag');
-let map;
-
-locBtn.addEventListener('click', openMap);
-mapClose.addEventListener('click', () => mapPanel.classList.remove('active'));
-
-function openMap(){
-  mapPanel.classList.add('active');
-  if(!map) initMap();
-  else getRoute();
-}
-
-function initMap(){
-  map = new maplibregl.Map({
-    container: 'map',
-    style: TILE_URL,
-    center: [124.3247, 10.1523], // Talibon
-    zoom: 14,
-    pitch: 60,
-    bearing: -20
-  });
-  map.addControl(new maplibregl.NavigationControl());
-  map.on('load', () => { getRoute(); animateCamera(); });
-}
-
-function getRoute(){
-  const DEST = [124.3247, 10.1523]; // Poblacion, Talibon
-  navigator.geolocation.getCurrentPosition(
-    pos => drawRoute([pos.coords.longitude, pos.coords.latitude], DEST),
-    err => drawRoute([120.9262, 14.7936], DEST), // Bocaue fallback
-    { enableHighAccuracy: true, timeout: 8000 }
-  );
-}
-
-function drawRoute(start, end){
-  // OSRM public demo server (HTTPS, no key)
-  const coords = `${start[0]},${start[1]};${end[0]},${end[1]}`;
-  const url = `https://router.project-osrm.org/route/v1/driving/${coords}?overview=full&geometries=geojson`;
-  fetch(url)
-    .then(r => r.json())
-    .then(json => {
-      if (!json.routes) throw new Error('No route');
-      const route = json.routes[0].geometry;
-      const dist  = (json.routes[0].distance / 1000).toFixed(1);
-      distanceTag.textContent = `${dist} km to Poblacion, Talibon`;
-
-      if (map.getSource('route')) {
-        map.removeLayer('route');
-        map.removeSource('route');
-      }
-      map.addSource('route', { type: 'geojson', data: { type: 'LineString', coordinates: route } });
-      map.addLayer({
-        id: 'route',
-        type: 'line',
-        source: 'route',
-        layout: { 'line-join': 'round', 'line-cap': 'round' },
-        paint: { 'line-color': '#7dd3fc', 'line-width': 8 }
-      });
-      const bbox = route.reduce((b, c) => [
-        [Math.min(b[0][0], c[0]), Math.min(b[0][1], c[1])],
-        [Math.max(b[1][0], c[0]), Math.max(b[1][1], c[1])]
-      ], [[180, 90], [-180, -90]]);
-      map.fitBounds(bbox, { padding: 40 });
-    })
-    .catch(() => {
-      // If even OSRM fails, draw straight line
-      const straight = [start, end];
-      distanceTag.textContent = 'Straight line';
-      if (map.getSource('route')) {
-        map.removeLayer('route');
-        map.removeSource('route');
-      }
-      map.addSource('route', { type: 'geojson', data: { type: 'LineString', coordinates: straight } });
-      map.addLayer({
-        id: 'route',
-        type: 'line',
-        source: 'route',
-        layout: { 'line-join': 'round', 'line-cap': 'round' },
-        paint: { 'line-color': '#7dd3fc', 'line-width': 6, 'line-dasharray': [2, 2] }
-      });
-      map.fitBounds([start, end], { padding: 40 });
-    });
-}
-
-function animateCamera(){
-  function spin(){
-    map.rotateTo(map.getBearing() + 60, { duration: 20000, easing: t => t });
-    requestAnimationFrame(spin);
-  }
-  spin();
-}
 </script>
 </body>
 </html>
