@@ -43,12 +43,55 @@
     justify-content:center;
     cursor:pointer;
     transition:transform .22s ease,box-shadow .22s ease;
+    z-index:50;
   }
   .loc-btn:hover{transform:translateY(-4px);box-shadow:0 10px 24px rgba(2,6,23,.8)}
-  .loc-btn svg{
-    width:24px;
-    height:24px;
-    fill:var(--accent);
+  .loc-btn svg{width:24px;height:24px;fill:var(--accent);}
+
+  /* Google map modal */
+  #mapPanel{
+    position:fixed;
+    inset:0;
+    background:#000a;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:100;
+  }
+  #mapPanel.active{display:flex}
+  #map{
+    width:90vw;
+    height:80vh;
+    border-radius:16px;
+    overflow:hidden;
+    box-shadow:0 12px 36px #000c;
+    position:relative;
+  }
+  #mapClose{
+    position:absolute;
+    top:12px;
+    right:12px;
+    background:var(--card);
+    border:1px solid rgba(255,255,255,.1);
+    color:var(--accent);
+    border-radius:999px;
+    width:36px;
+    height:36px;
+    font-size:20px;
+    cursor:pointer;
+    z-index:10;
+  }
+  #distanceTag{
+    position:absolute;
+    bottom:12px;
+    left:12px;
+    background:var(--card);
+    border:1px solid rgba(255,255,255,.1);
+    color:var(--accent);
+    padding:8px 14px;
+    border-radius:8px;
+    font-weight:600;
+    z-index:10;
   }
 </style>
 </head>
@@ -77,8 +120,16 @@
   <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
 </button>
 
+<!-- Google Maps -->
+<script async
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAVrbJ_I_HELTnZx6ldYcChFRNnzeImzq8&libraries=geometry">
+</script>
+
 <script>
-const WS_HOST = `ws://${location.hostname}:81/`;
+/*****************************************************************
+ *  ORIGINAL SLOT CODE (unchanged)
+ *****************************************************************/
+const WS_HOST = `${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.hostname}:81/`;
 const NUM_SLOTS = 6;
 const grid = document.getElementById('slotsGrid');
 const connDot = document.getElementById('conn-dot');
@@ -131,6 +182,85 @@ function scheduleReconnect(){ if(reconnectTimeout) return; reconnectTimeout=setT
 
 makeSlots();
 setTimeout(connect, 250);
+
+/*****************************************************************
+ *  GOOGLE MAPS – EXACT ROAD + TRUE DISTANCE
+ *****************************************************************/
+const locBtn   = document.querySelector('.loc-btn');
+const mapPanel = document.getElementById('mapPanel');
+const mapClose = document.getElementById('mapClose');
+const distanceTag = document.getElementById('distanceTag');
+let map, directionsRenderer, directionsService;
+
+locBtn.addEventListener('click', openMap);
+mapClose.addEventListener('click', () => mapPanel.classList.remove('active'));
+
+function openMap(){
+  mapPanel.classList.add('active');
+  if(!map) initGMap();
+  else getDirections();
+}
+
+function initGMap(){
+  const DEST = { lat: 10.1523, lng: 124.3247 }; // Poblacion, Talibon
+  map = new google.maps.Map(document.getElementById('map'), {
+    center: DEST,
+    zoom: 14,
+    mapTypeId: 'roadmap',
+    styles: [
+      {elementType: 'geometry', stylers: [{color: '#0f1724'}]},
+      {elementType: 'labels.text.stroke', stylers: [{color: '#0f1724'}]},
+      {elementType: 'labels.text.fill', stylers: [{color: '#9aa6b2'}]},
+      {featureType: 'road', elementType: 'geometry', stylers: [{color: '#1e293b'}]},
+      {featureType: 'road', elementType: 'labels.text.fill', stylers: [{color: '#7dd3fc'}]},
+      {featureType: 'road.highway', elementType: 'geometry', stylers: [{color: '#334155'}]},
+      {featureType: 'water', elementType: 'geometry', stylers: [{color: '#0b1220'}]}
+    ]
+  });
+  directionsService = new google.maps.DirectionsService();
+  directionsRenderer = new google.maps.DirectionsRenderer({
+    map: map,
+    polylineOptions: { strokeColor: '#7dd3fc', strokeWeight: 8 },
+    suppressMarkers: true
+  });
+  getDirections();
+}
+
+function getDirections(){
+  const DEST = { lat: 10.1523, lng: 124.3247 };
+  navigator.geolocation.getCurrentPosition(
+    pos => {
+      const start = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+      route(start, DEST);
+    },
+    err => {
+      const fallback = { lat: 14.7936, lng: 120.9262 }; // Bocaue
+      route(fallback, DEST);
+    },
+    { enableHighAccuracy: true, timeout: 8000 }
+  );
+}
+
+function route(origin, destination){
+  directionsService.route(
+    {
+      origin: origin,
+      destination: destination,
+      travelMode: google.maps.TravelMode.DRIVING,
+      unitSystem: google.maps.UnitSystem.METRIC
+    },
+    (result, status) => {
+      if (status === 'OK') {
+        directionsRenderer.setDirections(result);
+        const dist = result.routes[0].legs[0].distance.text; // "12.3 km"
+        distanceTag.textContent = `${dist} to Poblacion, Talibon`;
+        map.fitBounds(result.routes[0].bounds, { padding: 40 });
+      } else {
+        distanceTag.textContent = 'Route unavailable';
+      }
+    }
+  );
+}
 </script>
 </body>
 </html>
