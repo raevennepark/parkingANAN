@@ -88,7 +88,7 @@ function openMapsDeepLink(){
 
 <!-- ==========  WEBSOCKET  ========== -->
 <script>
-const WS_HOST = `${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.hostname}:81/`;
+const WS_HOST = `${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/`;
 const NUM_SLOTS = 6;
 const grid = document.getElementById('slotsGrid');
 const connDot = document.getElementById('conn-dot');
@@ -125,14 +125,4 @@ function applyUpdate(arr){ if(Array.isArray(arr)) arr.forEach(updateSlot); }
 let ws = null, reconnectTimeout = null;
 function setConnectionState(state){
   connDot.classList.remove('online');
-  if(state==='open'){ connDot.classList.add('online'); connText.textContent='Connected'; }
-  else { connDot.classList.remove('online'); connText.textContent='Disconnected'; }
-}
-function connect(){
-  if(ws) try{ ws.close(); }catch(e){}
-  setConnectionState('connecting');
-  try{ ws = new WebSocket(WS_HOST); } catch(err){ setConnectionState('error'); scheduleReconnect(); return; }
-  ws.addEventListener('open', ()=>{ setConnectionState('open'); });
-  ws.addEventListener('message', ev=>{ try{ applyUpdate(JSON.parse(ev.data)); }catch(e){} });
-  ws.addEventListener('close', ()=>{ setConnectionState('closed'); scheduleReconnect(); });
-  ws.addEventListener('error', ()=>{ setConnectionState('error'); try{ ws.close(); }catch(e){
+  if(state==='open'){ connDot
