@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>ESP32 Parking — Live Slots</title>
+<title>Parking Talibon — Live Slots</title>
 <style>
   :root{--bg:#0f1724;--card:#0b1220;--accent:#7dd3fc;--muted:#9aa6b2;--slot-size:120px;--radius:14px;}
   *{box-sizing:border-box}
@@ -53,18 +53,18 @@
 <div class="wrap">
 <header>
   <div>
-    <h1>parkingANAN — Live Slots</h1>
-    <div class="sub">Barrio Wakas Bocaue, Bulacan</div>
+    <h1>Parking Talibon — Live Slots</h1>
+    <div class="sub">Poblacion, Talibon, Bohol</div>
   </div>
   <div class="status-row">
-    <div class="dot" id="conn-dot"></div>
-    <div id="conn-text" class="sub">Connecting…</div>
+    <div class="dot online"></div>
+    <div class="sub">Demo Mode</div>
   </div>
 </header>
 
 <main class="card">
-  <div class="sub">6 Slots — Auto-updates via WebSocket</div>
-  <div id="slotsGrid" class="grid" aria-live="polite"></div>
+  <div class="sub">6 Slots — Static Demo</div>
+  <div id="slotsGrid" class="grid"></div>
   <footer><b>AER</b></footer>
 </main>
 </div>
@@ -77,7 +77,23 @@
 </button>
 
 <script>
-/*  Deep-link to Google Maps (app or web)  */
+/*  ------ DEMO SLOTS (3 empty, 3 occupied) ------  */
+const NUM_SLOTS = 6;
+const grid = document.getElementById('slotsGrid');
+
+function makeSlots(){
+  grid.innerHTML = '';
+  for(let i=1;i<=NUM_SLOTS;i++){
+    const el = document.createElement('div');
+    el.className = i <= 3 ? 'slot empty' : 'slot occupied';   // 1-3 empty, 4-6 occupied
+    el.id = 'slot-'+i;
+    el.innerHTML = `<div class="badge">Slot</div><div class="slot-id">#${i}</div><div class="uid" id="slot-${i}-uid">${i<=3 ? '(vacant)' : 'occupied'}</div>`;
+    grid.appendChild(el);
+  }
+}
+makeSlots();
+
+/*  ------ MAPS DEEP-LINK  ------  */
 function openMapsDeepLink(){
   const dest = "10.1523,124.3247";        // Poblacion, Talibon
   const label = "Poblacion, Talibon, Bohol";
@@ -85,44 +101,5 @@ function openMapsDeepLink(){
   location.href = url;   // redirect
 }
 </script>
-
-<!-- ==========  WEBSOCKET  ========== -->
-<script>
-const WS_HOST = `${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/`;
-const NUM_SLOTS = 6;
-const grid = document.getElementById('slotsGrid');
-const connDot = document.getElementById('conn-dot');
-const connText = document.getElementById('conn-text');
-
-function makeSlots(){
-  grid.innerHTML = '';
-  for(let i=1;i<=NUM_SLOTS;i++){
-    const el = document.createElement('div');
-    el.className = 'slot empty';
-    el.id = 'slot-'+i;
-    el.innerHTML = `<div class="badge">Slot</div><div class="slot-id">#${i}</div><div class="uid" id="slot-${i}-uid">(vacant)</div>`;
-    grid.appendChild(el);
-  }
-}
-function updateSlot(obj){
-  const id = Number(obj.id);
-  if(!id || id < 1 || id > NUM_SLOTS) return;
-  const container = document.getElementById('slot-'+id);
-  const uidEl = document.getElementById(`slot-${id}-uid`);
-  if(!container || !uidEl) return;
-  if(!obj.card || obj.card === ""){
-    container.classList.remove('occupied');
-    container.classList.add('empty');
-    uidEl.textContent = '(vacant)';
-  } else {
-    container.classList.remove('empty');
-    container.classList.add('occupied');
-    uidEl.textContent = 'occupied';
-  }
-}
-function applyUpdate(arr){ if(Array.isArray(arr)) arr.forEach(updateSlot); }
-
-let ws = null, reconnectTimeout = null;
-function setConnectionState(state){
-  connDot.classList.remove('online');
-  if(state==='open'){ connDot
+</body>
+</html>
